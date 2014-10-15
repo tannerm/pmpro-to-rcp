@@ -53,8 +53,9 @@ function ptr_init() {
 }
 
 /**
- * Prevent RCP from expiring users. In the event that we are dealing with old data
- * we want to make sure the expiration date has a chance to update before expiring everyone.
+ * Prevent RCP from expiring users while this plugin is active. In the event that
+ * we are dealing with old data we want to make sure the expiration date has a
+ * chance to update before expiring everyone.
  */
 function ptr_unhook() {
 	remove_action( 'rcp_expired_users_check', 'rcp_check_for_expired_users' );
