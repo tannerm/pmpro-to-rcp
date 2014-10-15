@@ -100,11 +100,20 @@ function ptr_migrate_user( $user_id, $pmpro_level_id ) {
 		return;
 	}
 
+	// All active PMPro users should get an active RCP Level, we'll handle payments later
+	update_user_meta( $user_id, 'rcp_status',             'active' );
+	update_user_meta( $user_id, 'rcp_subscription_level', $rcp_id  );
+
+	if ( ! get_user_meta( $user_id, 'rcp_subscription_key', true ) ) {
+		update_user_meta( $user_id, 'rcp_subscription_key', rcp_generate_subscription_key() );
+	}
+
 	global $wpdb;
 
 	// okay, add an invoice. first lookup the user_id from the subscription id passed
 	$old_order_id = $wpdb->get_var( $wpdb->prepare( "SELECT id FROM $wpdb->pmpro_membership_orders WHERE user_id = '%s' AND membership_id = '%s' AND gateway = 'stripe' ORDER BY timestamp DESC LIMIT 1", $user_id, $pmpro_level_id ) );
 
+	// If this account was manually set or is a test account, don't continue with payment migration
 	if ( ! $old_order_id ) {
 		return;
 	}
@@ -117,13 +126,7 @@ function ptr_migrate_user( $user_id, $pmpro_level_id ) {
 
 	update_user_meta( $user_id, '_rcp_stripe_user_id',     $old_order->subscription_transaction_id );
 	update_user_meta( $user_id, '_rcp_stripe_is_customer', 'yes'                                   );
-	update_user_meta( $user_id, 'rcp_status',              'active'                                );
-	update_user_meta( $user_id, 'rcp_subscription_level',  $rcp_id                                 );
 	update_user_meta( $user_id, 'rcp_recurring',           'yes'                                   );
-
-	if ( ! get_user_meta( $user_id, 'rcp_subscription_key', true ) ) {
-		update_user_meta( $user_id, 'rcp_subscription_key', rcp_generate_subscription_key() );
-	}
 
 	ptr_migrate_payments( $user_id, $old_order->subscription_transaction_id );
 
