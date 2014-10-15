@@ -2,7 +2,7 @@
 /**
  * Plugin Name: PMPro to RCP
  * Plugin URI:  http://wordpress.org/extend/plugins
- * Description: Convert Pusers from Paid Membership Pro to Restrict Content Pro
+ * Description: Convert user data from Paid Membership Pro to Restrict Content Pro
  * Version:     0.1.0
  * Author:      Tanner Moushey
  * Author URI:  http://tannermoushey.com
