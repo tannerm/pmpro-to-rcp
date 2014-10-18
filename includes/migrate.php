@@ -100,8 +100,12 @@ function ptr_migrate_user( $user_id, $pmpro_level_id ) {
 		return;
 	}
 
+	$pmpro_level = pmpro_getLevel( $pmpro_level_id );
+
+	$status = ( pmpro_isLevelFree( $pmpro_level ) ) ? 'free' : 'active';
+
 	// All active PMPro users should get an active RCP Level, we'll handle payments later
-	update_user_meta( $user_id, 'rcp_status',             'active' );
+	update_user_meta( $user_id, 'rcp_status',             $status  );
 	update_user_meta( $user_id, 'rcp_subscription_level', $rcp_id  );
 
 	if ( ! get_user_meta( $user_id, 'rcp_subscription_key', true ) ) {
